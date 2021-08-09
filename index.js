@@ -1,8 +1,21 @@
 const date = document.querySelector(".inp");
 const button = document.querySelector(".btn");
 const resultBox = document.querySelector(".result-box");
+const loadingBox = document.querySelector(".loading");
+const result = document.querySelector(".result");
 
-button.addEventListener("click",findPalindromeOrNot);
+button.addEventListener("click",showResuts);
+
+function showResuts(){
+    if(date.value){
+        result.innerText = "";
+        loadingBox.classList.remove("hidden");
+        window.setTimeout(findPalindromeOrNot,5000);
+    }
+    else{
+        result.innerText = "Please enter date to show results.";
+    }
+}
 
 function getDateObject(){
     let dateObj = date.value;
@@ -20,49 +33,41 @@ function getDateObject(){
 }
 
 function findPalindromeOrNot(){
-    let dateString = "";
-   let dateObj =  getDateObject();
-   let [nextDays,nextPalindromeDate,nextDateFormat] = getNextPalindromeDate(dateObj);
-   let [prevDays, prevPalindromeDate,prevDateFormat] = getPreviousPalindromeDate(dateObj);
-   if(nextDays<prevDays){
-        dateString =  getDateInCorrectFormat(nextPalindromeDate,nextDateFormat);
-        resultBox.innerText = `Next palindrome date is ${dateString} (${nextDateFormat}). You missed it by ${nextDays} days.`
-   }
-   else{
-       dateString = getDateInCorrectFormat(prevPalindromeDate,prevDateFormat);
-       resultBox.innerText = `Nearest palindrome date was ${dateString} (${prevDateFormat}). You missed it by ${prevDays} days.`
-
-   }
+        let dateString = "";
+        let dateObj =  getDateObject();
+        let [nextDays,nextPalindromeDate,nextDateFormat] = getNextPalindromeDate(dateObj);
+        let [prevDays, prevPalindromeDate,prevDateFormat] = getPreviousPalindromeDate(dateObj);
+        loadingBox.classList.add("hidden");
+        if(nextDays<prevDays){
+            dateString =  getDateInCorrectFormat(nextPalindromeDate,nextDateFormat);
+            result.innerText = `Next palindrome date is ${dateString} (${nextDateFormat}). You missed it by ${nextDays} days.`
+            }
+        else{
+           dateString = getDateInCorrectFormat(prevPalindromeDate,prevDateFormat);
+           result.innerText = `Nearest palindrome date was ${dateString} (${prevDateFormat}). You missed it by ${prevDays} days.`
+    
+            }
 }
 
 function getDateInCorrectFormat(palindromeDate,format){
+    palindromeDate = convertDateToString(palindromeDate)
     let dateString="";
     let formatArr = format.split("-");
     for(let i=0;i<formatArr.length;i++){
         if(formatArr[i]==="dd"){
-            if(palindromeDate.day<10){
-                dateString = dateString + "0"+palindromeDate.day
-            }
-            else{
                 dateString = dateString + palindromeDate.day
-            }
         }
         else if(formatArr[i]==="mm"){
-            if(palindromeDate.month<10){
-                dateString = dateString + "0"+palindromeDate.month;
-            }
-            else{
                 dateString = dateString + palindromeDate.month;
-            }
         }
         else if(formatArr[i]==="yy") {
-            dateString = dateString + palindromeDate.year%100;
+            dateString = dateString + palindromeDate.year.slice(-2);
         }
         else{
             dateString = dateString + palindromeDate.year;
         }
         if(i!==2){
-            dateString = dateString + "-"
+            dateString = dateString + "-";
         }
     }
     return dateString;
