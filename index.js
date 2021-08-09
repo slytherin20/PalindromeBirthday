@@ -10,10 +10,12 @@ function showResuts(){
     if(date.value){
         result.innerText = "";
         loadingBox.classList.remove("hidden");
+        resultBox.scrollIntoView({behavior:"smooth",block:"end"});
         window.setTimeout(findPalindromeOrNot,5000);
     }
     else{
         result.innerText = "Please enter date to show results.";
+        resultBox.scrollIntoView({behavior:"smooth",block:"end"});
     }
 }
 
@@ -41,11 +43,12 @@ function findPalindromeOrNot(){
         if(nextDays<prevDays){
             dateString =  getDateInCorrectFormat(nextPalindromeDate,nextDateFormat);
             result.innerText = `Next palindrome date is ${dateString} (${nextDateFormat}). You missed it by ${nextDays} days.`
-            }
+            resultBox.scrollIntoView({behavior:"smooth",block:"end"});    
+        }
         else{
            dateString = getDateInCorrectFormat(prevPalindromeDate,prevDateFormat);
            result.innerText = `Nearest palindrome date was ${dateString} (${prevDateFormat}). You missed it by ${prevDays} days.`
-    
+           resultBox.scrollIntoView({behavior:"smooth",block:"end"});
             }
 }
 
