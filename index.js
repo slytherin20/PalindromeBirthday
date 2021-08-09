@@ -2,6 +2,8 @@ const date = document.querySelector(".inp");
 const button = document.querySelector(".btn");
 const resultBox = document.querySelector(".result-box");
 
+button.addEventListener("click",findPalindromeOrNot);
+
 function getDateObject(){
     let dateObj = date.value;
     let arr = dateObj.split("-").reverse();
@@ -18,21 +20,53 @@ function getDateObject(){
 }
 
 function findPalindromeOrNot(){
+    let dateString = "";
    let dateObj =  getDateObject();
    let [nextDays,nextPalindromeDate,nextDateFormat] = getNextPalindromeDate(dateObj);
    let [prevDays, prevPalindromeDate,prevDateFormat] = getPreviousPalindromeDate(dateObj);
    if(nextDays<prevDays){
-       console.log(nextDays,nextPalindromeDate,nextDateFormat)
+        dateString =  getDateInCorrectFormat(nextPalindromeDate,nextDateFormat);
+        resultBox.innerText = `Next palindrome date is ${dateString} (${nextDateFormat}). You missed it by ${nextDays} days.`
    }
    else{
-       console.log("Previous days:",prevDays)
-       console.log(prevPalindromeDate)
-       console.log("Format:",prevDateFormat)
+       dateString = getDateInCorrectFormat(prevPalindromeDate,prevDateFormat);
+       resultBox.innerText = `Nearest palindrome date was ${dateString} (${prevDateFormat}). You missed it by ${prevDays} days.`
+
    }
 }
 
-
-button.addEventListener("click",findPalindromeOrNot);
+function getDateInCorrectFormat(palindromeDate,format){
+    let dateString="";
+    let formatArr = format.split("-");
+    for(let i=0;i<formatArr.length;i++){
+        if(formatArr[i]==="dd"){
+            if(palindromeDate.day<10){
+                dateString = dateString + "0"+palindromeDate.day
+            }
+            else{
+                dateString = dateString + palindromeDate.day
+            }
+        }
+        else if(formatArr[i]==="mm"){
+            if(palindromeDate.month<10){
+                dateString = dateString + "0"+palindromeDate.month;
+            }
+            else{
+                dateString = dateString + palindromeDate.month;
+            }
+        }
+        else if(formatArr[i]==="yy") {
+            dateString = dateString + palindromeDate.year%100;
+        }
+        else{
+            dateString = dateString + palindromeDate.year;
+        }
+        if(i!==2){
+            dateString = dateString + "-"
+        }
+    }
+    return dateString;
+}
 
 function reverseString(dateString){
     return dateString.split("").reverse().join("");
@@ -75,12 +109,12 @@ function dateFormats(dateString){
 
 function checkPalindromeForAllFormats(date){
     let formats = {
-        0:"ddmmyy",
-        1:"mmddyy",
-        2:"yyddmm",
-        3: "ddmmyyyy",
-        4: "mmddyyyy",
-        5:"yyyyddmm"
+        0:"dd-mm-yy",
+        1:"mm-dd-yy",
+        2:"yy-dd-mm",
+        3: "dd-mm-yyyy",
+        4: "mm-dd-yyyy",
+        5:"yyyy-dd-mm"
     }
     let palindromeFormat = "";
     let dateString = convertDateToString(date);
