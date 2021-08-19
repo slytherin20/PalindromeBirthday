@@ -10,12 +10,12 @@ function showResuts(){
     if(date.value){
         result.innerText = "";
         loadingBox.classList.remove("hidden");
-        resultBox.scrollIntoView({behavior:"smooth",block:"end"});
+        resultBox.scrollIntoView({behavior:"smooth",block:"start"});
         window.setTimeout(findPalindromeOrNot,5000);
     }
     else{
         result.innerText = "Please enter date to show results.";
-        resultBox.scrollIntoView({behavior:"smooth",block:"end"});
+        resultBox.scrollIntoView({behavior:"smooth",block:"start"});
     }
 }
 
@@ -37,19 +37,30 @@ function getDateObject(){
 function findPalindromeOrNot(){
         let dateString = "";
         let dateObj =  getDateObject();
-        let [nextDays,nextPalindromeDate,nextDateFormat] = getNextPalindromeDate(dateObj);
-        let [prevDays, prevPalindromeDate,prevDateFormat] = getPreviousPalindromeDate(dateObj);
-        loadingBox.classList.add("hidden");
-        if(nextDays<prevDays){
-            dateString =  getDateInCorrectFormat(nextPalindromeDate,nextDateFormat);
-            result.innerText = `Next palindrome date is ${dateString} (${nextDateFormat}). You missed it by ${nextDays} days.`
-            resultBox.scrollIntoView({behavior:"smooth",block:"end"});    
+        let [isPalindrome,dateFormat] = checkPalindromeForAllFormats(dateObj);
+        //When date is palindrome
+        if(isPalindrome){
+            loadingBox.classList.add("hidden");
+            result.innerHTML = "<b>Yes! Your birthday is a palindrome.</b>";
+            resultBox.scrollIntoView({behavior:"smooth",block:"start"})
         }
+        //When date is not palindrome then find nearest palindrome date.
         else{
-           dateString = getDateInCorrectFormat(prevPalindromeDate,prevDateFormat);
-           result.innerText = `Nearest palindrome date was ${dateString} (${prevDateFormat}). You missed it by ${prevDays} days.`
-           resultBox.scrollIntoView({behavior:"smooth",block:"end"});
+            let [nextDays,nextPalindromeDate,nextDateFormat] = getNextPalindromeDate(dateObj);
+            let [prevDays, prevPalindromeDate,prevDateFormat] = getPreviousPalindromeDate(dateObj);
+            loadingBox.classList.add("hidden");
+            if(nextDays<prevDays){
+                dateString =  getDateInCorrectFormat(nextPalindromeDate,nextDateFormat);
+                result.innerText = `Next palindrome date is ${dateString} (${nextDateFormat}). You missed it by ${nextDays} days.`
+                resultBox.scrollIntoView({behavior:"smooth",block:"start"});    
             }
+            else{
+            dateString = getDateInCorrectFormat(prevPalindromeDate,prevDateFormat);
+            result.innerText = `Nearest palindrome date was ${dateString} (${prevDateFormat}). You missed it by ${prevDays} days.`
+            resultBox.scrollIntoView({behavior:"smooth",block:"start"});
+                }
+        }
+        
 }
 
 function getDateInCorrectFormat(palindromeDate,format){
